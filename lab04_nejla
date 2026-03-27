@@ -1,0 +1,116 @@
+# Ime: Nejla Kavazović
+# Datum: 25.03.2026.
+# Lab 4 --- Python za FastAPI
+
+
+# Zadatak 1
+
+student = {"ime": "Amina", "godina": 3, "email": "amina@untz.ba", "smjer": "Informatika"}  #Kreira se rječnik — struktura podataka u obliku ključ: vrijednost
+
+print(student)   # Ispis cijelog rječnika
+
+print(student["ime"])  #Pristup vrijednosti rječnika po ključu — ispisuje "Amina"
+
+student["aktivan"] = True      # Dodaje se novi ključ "aktivan" sa vrijednošću True u rječnik student
+print(student)
+
+# Lista od 3 rječnika
+studenti = [
+    {"ime": "Amina",  "godina": 3, "email": "amina@untz.ba",  "smjer": "Informatika",      "aktivan": True},
+    {"ime": "Samir",  "godina": 2, "email": "samir@untz.ba", "smjer": "Elektrotehnika",   "aktivan": True},
+    {"ime": "Lejla",  "godina": 4, "email": "lejla@untz.ba",    "smjer": "Telekomunikacija",       "aktivan": False}
+]
+
+for s in studenti:    #Petlja koja prolazi kroz svaki rječnik u listi i ispisuje ga
+    print(s)
+
+
+# Zadatak 2
+
+def get_student_info(name: str, year: int, email: str) -> dict:          #Definicija funkcije s type hints — : str, : int označavaju očekivane tipove parametara, -> dict označava da funkcija vraća rječnik
+    return {
+        "name": name,
+        "year": year,
+        "email": email,
+        "greeting": f"Zdravo {name}, vi ste {year} godina studija"       #f-string — string u koji se dinamički ugrađuju vrijednosti varijabli unutar {}
+
+    }
+
+rezultat = get_student_info("Amina", 3, "amina@untz.ba")                 #testiranje funkcije — poziva se s konkretnim argumentima i rezultat se sprema u varijablu rezultat
+print(rezultat)
+print(rezultat["greeting"])
+
+
+# Zadatak 3
+
+def ispisi_poziv(func):                                                 #Dekorator je funkcija koja prima drugu funkciju (func) i "omota" je novom logikom. wrapper je unutarnja funkcija koja se izvršava umjesto originalne. *args prima pozicijske, **kwargs imenovane argumente
+    def wrapper(*args, **kwargs):
+        print(f"Pozivam: {get_student_info.__name__}")                  # pozivam originalnu funkciju i vraćam rezultat
+        return func(*args, **kwargs)
+    return wrapper
+
+
+@ispisi_poziv                                                          #Sintaksa dekoratora — ekvivalentno pisanju info_o_studentu = ispisi_poziv(info_o_studentu)
+def info_o_studentu(ime: str, godina: int, email: str) -> dict:
+    return {"ime": ime, "godina": godina, "email": email, "greeting": f"Zdravo {ime}, vi ste {godina} godina studija"}
+
+rezultat = info_o_studentu("Ana", 3, "ana@untz.ba")
+print(rezultat)
+
+
+# Zadatak 4
+
+class Course:
+    def __init__(self, name: str, code: str, credits: int, professor: str):      #__init__ je konstruktor — automatski se poziva pri kreiranju objekta. self predstavlja trenutnu instancu klase, a self.name = name sprema parametar kao atribut objekta
+        self.name = name
+        self.code = code
+        self.credits = credits
+        self.professor = professor
+
+    def description(self) -> str:                                     #Metoda klase koja vraća formatirani string s podacima o kursu. Svaka metoda prima self kao prvi parametar
+        return f"{self.code} - {self.name} ({self.credits} kredita) | Profesor: {self.professor}"
+
+
+kurs1 = Course(                                                       #Instanciranje objekta — kreira se konkretna instanca klase Course s proslijeđenim vrijednostima
+    name="Razvoj telekomunikacijske programske podrške",
+    code="TK207",
+    credits=6,
+    professor="Prof. Alma Šećerbegović"
+)
+
+kurs2 = Course(
+    name="Projektovanje telekomunikacijskih mreža",
+    code="TK405",
+    credits=6,
+    professor="Prof. Aljo Mujčić"
+)
+
+print(kurs1.description())
+print(kurs2.description())
+
+
+# Zadatak 5
+
+students = [
+    {"name": "Amina", "year": 3, "email": "amina@untz.ba"},
+    {"name": "Emir",  "year": 2, "email": "emir@untz.ba"},
+    {"name": "Lejla", "year": 3, "email": "lejla@untz.ba"},
+    {"name": "Samir", "year": 1, "email": "samir@untz.ba"}
+]
+
+def filter_by_year(students: list, year: int) -> list:                  #List comprehension — kompaktan način kreiranja nove liste. Čita se kao: "uzmi s za svaki s u students, ali samo ako je s["year"] == year"
+    return [s for s in students if s["year"] == year]
+
+def print_registry(students: list) -> None:
+    print(f"{'Ime'} {'Email'}")                                     
+    for s in students:
+        print(f"{s['name']} {s['email']}")
+
+
+print("~ Svi studenti ~")
+print_registry(students)
+
+
+print("\n~ Studenti 3. godine ~")
+treca_godina = filter_by_year(students, 3)
+print_registry(treca_godina)
